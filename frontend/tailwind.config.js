@@ -12,6 +12,14 @@ export default {
         // Touch-friendly spacing (48px = min iOS touch target)
         touch: '3rem',
       },
+      height: {
+        // Touch-friendly height for buttons and inputs
+        touch: '3rem',
+      },
+      minHeight: {
+        // Minimum height for touch targets
+        touch: '3rem',
+      },
       fontSize: {
         // Mobile-first sizes (readable on small screens)
         xs: ['0.75rem', { lineHeight: '1.25rem' }],

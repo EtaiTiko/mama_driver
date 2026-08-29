@@ -6,6 +6,7 @@
 @tailwind utilities;
 
 /* --- Base RTL/LTR setup --- */
+
 @layer base {
   html {
     @apply scroll-smooth;
@@ -27,6 +28,7 @@
 }
 
 /* --- Mobile-first touch targets (48px minimum) --- */
+
 @layer components {
   .btn-touch {
     @apply h-touch min-h-touch flex items-center justify-center px-4;
