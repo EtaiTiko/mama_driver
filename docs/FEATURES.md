@@ -12,13 +12,25 @@ Legend: ☐ not started · ◐ in progress · ☑ done
 ☑ Repo skeleton created (frontend/backend workspaces, config files)
 
 ## Phase 1 — Database & authentication
-☐ Prisma schema implemented per `DATABASE.md`
-☐ Initial migration
-☐ Argon2id password hashing
-☐ Login / logout
-☐ JWT access token + refresh cookie
-☐ Role-based route guards (STUDENT / TEACHER / ADMIN)
-☐ Initial teacher/admin account creation via seed script + env vars (no hardcoded password)
+◐ Prisma schema implemented per `DATABASE.md` — written, **not yet migrated
+  against a real database** (this sandbox has no Postgres and no network
+  to fetch Prisma's engine binaries)
+☐ Initial migration — blocked until run in an environment with Postgres + network
+◐ Argon2id password hashing — code written, **not run** (argon2 needs a
+  native module compiled via `npm install`, not possible here)
+◐ Login / logout — implemented (`POST /api/auth/login`, `/logout`), not run
+◐ JWT access token + refresh cookie (rotation on every refresh, revocable
+  via `RefreshToken` table) — implemented, not run
+◐ Role-based route guards (STUDENT / TEACHER / ADMIN) — implemented
+  (`requireAuth` + `requireRole` middleware), not run
+◐ Initial teacher/admin account creation via seed script + env vars (no
+  hardcoded password) — implemented (`backend/prisma/seed.ts`), not run
+
+Every ◐ item above passed an offline TypeScript compile check (see
+`PROJECT_STATUS.md`) but has **not** been executed against a real
+database, per the master spec's rule against claiming something is done
+before it's implemented *and* tested. That test pass is the very next
+step, in an environment with network + Postgres access.
 
 ## Phase 2 — Mobile UI foundation
 ☐ Tailwind + RTL base configured

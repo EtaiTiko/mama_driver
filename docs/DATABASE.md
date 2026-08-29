@@ -177,6 +177,23 @@ progress data has clear structure for reporting to students.
 likely better once we want per-student progress trends across many
 lessons.)
 
+### RefreshToken (added during Phase 1 implementation)
+Not in the original plan above — added so refresh tokens are revocable
+server-side (logout, forced logout) rather than purely stateless, per the
+decision recorded in `docs/SECURITY.md` and `PROJECT_STATUS.md`.
+
+| Field | Type | Notes |
+|---|---|---|
+| id | String (cuid) | PK |
+| userId | String | FK -> User |
+| tokenHash | String | SHA-256 hash of the token, unique — the raw token is never stored |
+| expiresAt | DateTime | |
+| revokedAt | DateTime? | null = still valid |
+| createdAt | DateTime | |
+
+Refresh tokens rotate on every use (old one revoked, new one issued),
+implemented in `backend/src/services/authService.ts`.
+
 ## Relationships summary
 
 ```
