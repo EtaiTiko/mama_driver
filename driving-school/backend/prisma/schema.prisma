@@ -1,10 +1,10 @@
-// Prisma schema — Phase 0 stub.
+// Prisma schema — Phase 1 implementation of docs/DATABASE.md.
 //
-// Only the datasource/generator are configured here. The actual data
-// model (User, Teacher, Student, Lesson, TeacherAvailability,
-// AvailabilityException, Message, Notification, Payment, ...) is fully
-// planned in /docs/DATABASE.md and should be implemented here as the
-// first task of Phase 1, followed by `prisma migrate dev`.
+// Field/model naming, indexes, and relationships follow DATABASE.md
+// directly. One addition beyond that doc: RefreshToken, needed to make
+// logout and token rotation real server-side operations rather than
+// purely stateless JWTs (see docs/SECURITY.md and PROJECT_STATUS.md
+// "Important technical decisions").
 
 generator client {
   provider = "prisma-client-js"
@@ -13,4 +13,233 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+enum Role {
+  TEACHER
+  STUDENT
+  ADMIN
+}
+
+enum LessonStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  CANCELLED_BY_STUDENT
+  CANCELLED_BY_TEACHER
+  COMPLETED
+  NO_SHOW
+}
+
+enum AvailabilityExceptionType {
+  UNAVAILABLE
+  AVAILABLE
+}
+
+enum NotificationType {
+  LESSON_REQUESTED
+  LESSON_ACCEPTED
+  LESSON_DECLINED
+  LESSON_CANCELLED
+  NEW_MESSAGE
+  LESSON_REMINDER
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  REFUNDED
+  CANCELLED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  firstName    String
+  lastName     String
+  phone        String   @unique
+  email        String?  @unique
+  passwordHash String
+  role         Role
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  teacherProfile   Teacher?
+  studentProfile   Student?
+  sentMessages     Message[]      @relation("MessageSender")
+  receivedMessages Message[]      @relation("MessageReceiver")
+  notifications    Notification[]
+  refreshTokens    RefreshToken[]
+}
+
+model Teacher {
+  id                        String   @id @default(cuid())
+  userId                    String   @unique
+  user                      User     @relation(fields: [userId], references: [id])
+  licenseNumber             String
+  vehicleDescription        String?
+  defaultLessonDurationMin  Int      @default(45)
+  defaultLessonPrice        Decimal
+  minBookingNoticeHours     Int      @default(12)
+  maxBookingHorizonDays     Int      @default(30)
+  cancellationDeadlineHours Int      @default(12)
+  // Configurable per teacher rather than hardcoded, per
+  // docs/ARCHITECTURE.md §5 (timezone requirement).
+  timezone                  String   @default("Asia/Jerusalem")
+  active                    Boolean  @default(true)
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+
+  students     Student[]
+  lessons      Lesson[]
+  availability TeacherAvailability[]
+  exceptions   AvailabilityException[]
+}
+
+model Student {
+  id                         String    @id @default(cuid())
+  userId                     String    @unique
+  user                       User      @relation(fields: [userId], references: [id])
+  teacherId                  String
+  teacher                    Teacher   @relation(fields: [teacherId], references: [id])
+  dateOfBirth                DateTime?
+  address                    String?
+  drivingLicenseType         String?
+  preferredLessonDurationMin Int?
+  enrollmentDate             DateTime  @default(now())
+  notes                      String?
+  active                     Boolean   @default(true)
+  createdAt                  DateTime  @default(now())
+  updatedAt                  DateTime  @updatedAt
+
+  lessons  Lesson[]
+  payments Payment[]
+
+  @@index([teacherId])
+}
+
+model Lesson {
+  id            String       @id @default(cuid())
+  studentId     String
+  student       Student      @relation(fields: [studentId], references: [id])
+  teacherId     String
+  teacher       Teacher      @relation(fields: [teacherId], references: [id])
+  startTime     DateTime
+  endTime       DateTime
+  status        LessonStatus @default(PENDING)
+  price         Decimal
+  studentNotes  String?
+  teacherNotes  String?
+  declineReason String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  progress LessonProgress?
+  payments Payment[]
+
+  @@index([teacherId, startTime])
+  @@index([studentId, startTime])
+}
+
+model TeacherAvailability {
+  id        String   @id @default(cuid())
+  teacherId String
+  teacher   Teacher  @relation(fields: [teacherId], references: [id])
+  // 0 = Sunday .. 6 = Saturday, matching the Israeli week start.
+  dayOfWeek Int
+  // Minutes since midnight, local to Teacher.timezone. Kept as plain
+  // Int rather than Prisma's Time type for simpler arithmetic when
+  // computing available slots in the scheduling engine (Phase 3).
+  startTime Int
+  endTime   Int
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([teacherId, dayOfWeek])
+}
+
+model AvailabilityException {
+  id        String                    @id @default(cuid())
+  teacherId String
+  teacher   Teacher                   @relation(fields: [teacherId], references: [id])
+  date      DateTime                  @db.Date
+  type      AvailabilityExceptionType
+  // Null startTime/endTime = applies to the whole day.
+  startTime Int?
+  endTime   Int?
+  reason    String?
+  createdAt DateTime                  @default(now())
+
+  @@index([teacherId, date])
+}
+
+model Message {
+  id         String    @id @default(cuid())
+  senderId   String
+  sender     User      @relation("MessageSender", fields: [senderId], references: [id])
+  receiverId String
+  receiver   User      @relation("MessageReceiver", fields: [receiverId], references: [id])
+  message    String
+  createdAt  DateTime  @default(now())
+  readAt     DateTime?
+
+  @@index([senderId, receiverId])
+  @@index([receiverId, readAt])
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id])
+  type      NotificationType
+  // Small structured data (e.g. { "lessonId": "..." }) for building the
+  // notification's text/link — see docs/DATABASE.md.
+  payload   Json
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
+
+  @@index([userId, readAt])
+}
+
+model Payment {
+  id        String        @id @default(cuid())
+  lessonId  String?
+  lesson    Lesson?       @relation(fields: [lessonId], references: [id])
+  studentId String
+  student   Student       @relation(fields: [studentId], references: [id])
+  amount    Decimal
+  status    PaymentStatus @default(PENDING)
+  method    String?
+  paidAt    DateTime?
+  notes     String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@index([studentId, status])
+}
+
+model LessonProgress {
+  id                   String   @id @default(cuid())
+  lessonId             String   @unique
+  lesson               Lesson   @relation(fields: [lessonId], references: [id])
+  topicsPracticed      String[]
+  areasForImprovement  String?
+  instructorAssessment String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+model RefreshToken {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  // Only the SHA-256 hash is stored — a leaked database row can't be
+  // replayed as a working refresh token. See docs/SECURITY.md.
+  tokenHash String    @unique
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
 }

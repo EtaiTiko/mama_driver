@@ -27,20 +27,43 @@ This repository is being built in phases. See:
 /docs       - architecture, database, features, security docs
 ```
 
-## Getting started (once Phase 1 lands)
+## Getting started
 
-This section will be filled in as the database, auth, and build tooling
-are implemented. For now:
+This has been written but **not run** — it was authored in a sandbox with
+no network access and no Postgres instance (see `PROJECT_STATUS.md`).
+Treat the steps below as the intended path, not a verified one, until
+someone runs them for real.
 
 ```bash
 # from repo root
-npm install          # installs frontend + backend workspaces
-cp .env.example .env # fill in real values, never commit .env
+npm install                    # installs frontend + backend workspaces
+cp .env.example .env           # fill in real values — DATABASE_URL,
+                                # JWT secrets, INITIAL_ADMIN_PHONE, etc.
+                                # never commit .env
+
+# requires a running Postgres instance matching DATABASE_URL
+cd backend
+npx prisma migrate dev --name init   # creates tables from schema.prisma
+npm run prisma:seed                  # creates the first ADMIN account
+                                      # (prints a one-time password if
+                                      # INITIAL_ADMIN_PASSWORD is unset)
+npm run dev                          # starts the API on PORT (default 4000)
 ```
 
-Database setup, migrations, seeding, and running dev servers will be
-documented here as soon as Phase 1 (database & auth) is implemented —
-see `PROJECT_STATUS.md` for exactly what exists right now.
+```bash
+# in a second terminal, once the API is running
+curl -X POST http://localhost:4000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"phone":"<the phone you seeded>","password":"<the seeded password>"}'
+```
+
+Frontend dev server (currently a placeholder page — Phase 2 builds the
+real UI):
+
+```bash
+cd frontend
+npm run dev     # http://localhost:5173
+```
 
 ## Development workflow
 

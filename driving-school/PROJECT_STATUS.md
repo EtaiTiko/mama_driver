@@ -1,108 +1,169 @@
 # Project Status
 
-Last updated: 2026-08-29 (Phase 0 session)
+Last updated: 2026-08-29 (Phase 1 session)
 
 ## What has been completed
 
-- **Phase 0 — Project planning: done.**
-  - Technology stack decided (see `docs/ARCHITECTURE.md`):
-    React + TypeScript + Vite + Tailwind (frontend), Node + TypeScript +
-    Express (backend), PostgreSQL + Prisma (data), JWT + Argon2id (auth).
-  - Repo skeleton created as an npm-workspaces monorepo:
-    `/frontend`, `/backend`, `/docs`, root `package.json`.
-  - Documentation created: `README.md`, `docs/ARCHITECTURE.md`,
-    `docs/DATABASE.md` (full planned schema), `docs/FEATURES.md`
-    (phase-by-phase checklist), `docs/SECURITY.md` (commitments +
-    Phase 13 checklist), `docs/MASTER_SPEC.md` (the original brief,
-    verbatim — the canonical source of truth; the other docs are derived
-    from it and should defer to it if anything ever conflicts).
-  - Minimal non-functional placeholder files scaffolded so the workspaces
-    resolve (`frontend/src/main.tsx`, `App.tsx`, `index.css`,
-    `backend/src/index.ts`) — these are intentionally trivial ("hello
-    world"-level) and contain **no feature logic**. They exist only so
-    `npm install` / `npm run dev` have something to point at once
-    dependencies are installed.
-  - `.env.example` created listing the environment variables the
-    architecture will need.
+- **Phase 0 — Project planning: done.** (See prior entry, unchanged —
+  stack, docs, repo skeleton.)
+
+- **Phase 1 — Database & authentication: code written, NOT yet run or
+  tested.** Read the "Environment constraints" section below before
+  trusting anything in this section further than "compiles."
+
+  Implemented:
+  - `backend/prisma/schema.prisma` — full schema per `docs/DATABASE.md`:
+    `User`, `Teacher`, `Student`, `Lesson`, `TeacherAvailability`,
+    `AvailabilityException`, `Message`, `Notification`, `Payment`,
+    `LessonProgress`, plus `RefreshToken` (added during this phase, see
+    "Important technical decisions").
+  - `backend/src/lib/env.ts` — zod-validated environment config, fails
+    fast on missing/short secrets instead of silently signing JWTs with
+    `undefined`.
+  - `backend/src/lib/prisma.ts` — shared Prisma client singleton.
+  - `backend/src/lib/password.ts` — Argon2id hash/verify helpers.
+  - `backend/src/lib/jwt.ts` — access token sign/verify, opaque refresh
+    token generation + hashing + expiry calculation.
+  - `backend/src/middleware/auth.ts` — `requireAuth`, verifies the
+    `Authorization: Bearer` access token.
+  - `backend/src/middleware/roleGuard.ts` — `requireRole(...)`, role
+    checks only (resource-ownership checks are per-route, added as those
+    routes get built in later phases).
+  - `backend/src/middleware/errorHandler.ts` — centralized JSON error
+    responses, including Zod validation errors.
+  - `backend/src/validation/auth.ts` — login request validation.
+  - `backend/src/services/authService.ts` — login, refresh-token
+    rotation, revoke-on-logout.
+  - `backend/src/routes/auth.ts` — `POST /api/auth/login`,
+    `POST /api/auth/refresh`, `POST /api/auth/logout`,
+    `GET /api/auth/me` (example protected route).
+  - `backend/src/index.ts` — wired up (cors, json body parsing, cookies,
+    `/health`, `/api` router, error handling).
+  - `backend/prisma/seed.ts` — creates the first ADMIN account from
+    `INITIAL_ADMIN_PHONE` / `INITIAL_ADMIN_PASSWORD` env vars; generates
+    and prints a one-time random password if none is provided. No
+    hardcoded password anywhere.
+
+  Verification actually performed: an offline TypeScript compile check
+  (see "Verification method" below) — nothing more.
+
+## Environment constraints for this session (read before continuing)
+
+This session ran in a sandbox with:
+- **No network access** (`npm install` against the real npm registry
+  returns `403 host_not_allowed`) — so none of the packages in
+  `backend/package.json` (`express`, `@prisma/client`, `argon2`,
+  `jsonwebtoken`, `zod`, `express-rate-limit`, etc.) are actually
+  installed, and Prisma's query-engine binaries (also fetched over the
+  network) could not be downloaded.
+- **No Postgres instance.**
+- No persistence between chat sessions in this interface — this
+  scaffold only exists because it was written to a zip file the user
+  downloads and moves to a real machine/repo.
+
+### Verification method actually used (and its limits)
+Real code could not be run, so verification was: copy `backend/src` to a
+scratch directory, add hand-written ambient `declare module` stubs for
+every external package (typed as `any`), and run `tsc --noEmit` against
+that. This is a genuine, useful check — it caught one real bug (see
+below) — but it does **not** verify:
+- That the code actually runs under Node.
+- That Prisma's generated types match how the code queries the database
+  (the stub typed `@prisma/client` as `any`, so e.g. a typo'd field name
+  in a `prisma.user.findUnique({ where: { ... } })` call would not have
+  been caught).
+- That `argon2`'s native module compiles/loads correctly.
+- That any request/response actually round-trips correctly.
+
+**Bug the offline check did catch and fix:** `backend/tsconfig.json` uses
+`"module": "NodeNext"` / `"moduleResolution": "NodeNext"`, which requires
+relative imports to use an explicit `.js` extension even though the
+source files are `.ts` (a well-known Node ESM + TypeScript requirement).
+Every relative import across `backend/src` and `backend/prisma/seed.ts`
+was missing this and has been fixed.
 
 ## What is currently being worked on
 
-Nothing — Phase 0 is complete and awaiting explicit instruction to
-proceed to Phase 1 (per the master prompt's "continue only when
-explicitly instructed" rule).
+Nothing mid-flight. Phase 1 code is written; the next session should
+**run it for real** before writing any more feature code (see "Next
+recommended action").
 
 ## What remains
 
-Phases 1 through 16, in full, per `docs/FEATURES.md`. Nothing beyond
-Phase 0 has been implemented. In particular:
-- No database schema has actually been written into
-  `backend/prisma/schema.prisma` yet (it's documented as a plan in
-  `docs/DATABASE.md`, not yet implemented as code) — this is the first
-  thing Phase 1 should do.
-- No authentication code exists yet.
-- No UI beyond an empty placeholder page exists yet.
+- Actually running Phase 1: `npm install`, provision Postgres, run
+  `prisma migrate dev`, run the seed script, start the server, and test
+  every endpoint against a real database.
+- Fixing whatever the above surfaces — there will likely be at least
+  minor issues, since none of this has touched a real database or a real
+  `@prisma/client` yet.
+- Phases 2 through 16, entirely (see `docs/FEATURES.md`).
 
 ## Database changes
 
-None yet. Planned schema is fully drafted in `docs/DATABASE.md` and is
-ready to be turned into `backend/prisma/schema.prisma` + an initial
-migration as the first step of Phase 1.
+- Full schema implemented in `backend/prisma/schema.prisma` (see above).
+- **No migration has been generated or run** — `backend/prisma/migrations`
+  does not exist yet. That is the literal next command to run.
 
 ## API endpoints created
 
-None yet.
+All implemented, none tested against a live server:
+- `GET /health`
+- `POST /api/auth/login` — body `{ phone, password }` → `{ accessToken }`,
+  sets an HttpOnly `refreshToken` cookie scoped to `/auth`.
+- `POST /api/auth/refresh` — reads the refresh cookie, rotates it,
+  returns a new `{ accessToken }`.
+- `POST /api/auth/logout` — revokes the refresh token, clears the cookie.
+- `GET /api/auth/me` — requires `Authorization: Bearer <accessToken>`,
+  returns the current user + role-specific profile ids.
 
 ## Important technical decisions
 
-1. **Separate frontend/backend (not Next.js full-stack)** — chosen to
-   satisfy the "deploy frontend/backend/DB independently" requirement and
-   to keep authorization logic explicit and auditable. See
-   `docs/ARCHITECTURE.md` §2 for the full reasoning and the rejected
-   alternatives.
-2. **JWT access token (memory, not localStorage) + HttpOnly refresh
-   cookie**, with refresh tokens tracked server-side (not purely
-   stateless) so logout is a real operation. See `docs/SECURITY.md`.
-3. **UTC storage, configurable display timezone** (`Teacher.timezone`
-   field) rather than hardcoding `Asia/Jerusalem` into business logic,
-   per the spec's explicit requirement.
-4. **Booking race-condition defense is two-layered**: an app-level
-   transactional re-check plus a planned Postgres exclusion constraint as
-   a database-level backstop. Documented in `docs/DATABASE.md` under
-   "Booking concurrency" — actual implementation deferred to Phase 1/3.
-5. **npm workspaces monorepo** rather than two separate repos, to keep
-   docs/status in one place while still producing two independently
-   deployable build artifacts.
+1. **Separate frontend/backend, JWT + HttpOnly refresh cookie, UTC
+   storage** — carried over from Phase 0, see prior entries in
+   `docs/ARCHITECTURE.md` / `docs/SECURITY.md`.
+2. **Added a `RefreshToken` table** (not in the original `DATABASE.md`
+   draft) so refresh tokens are individually revocable server-side —
+   logout and forced-logout are real operations, not just "the client
+   deleted its cookie." Tokens are opaque random strings; only their
+   SHA-256 hash is stored, and they rotate on every use.
+3. **Central `env.ts` with zod validation** — the app refuses to start
+   rather than silently running with a missing/weak JWT secret.
+4. **Login errors are deliberately generic** ("phone or password
+   incorrect") regardless of whether the phone number exists, per
+   `docs/SECURITY.md`.
+5. Kept the offline-verification limits explicit in this file rather
+   than implicitly "passing" Phase 1 — per the master spec's rule to
+   never claim something is finished without testing it.
 
 ## Known bugs
 
-None — no feature code exists yet to have bugs.
-
-## Environment / tooling note for whoever continues this project
-
-This Phase 0 session was run in a chat environment with **no network
-access** and **no persistence between sessions** — so `npm install` was
-never run here, no Postgres instance exists, and nothing has been
-verified to actually build or run. Everything under `/frontend` and
-`/backend` is unverified scaffolding, not tested code.
-
-**Recommendation:** continue this project in an environment with
-persistent files, git, and network access — e.g. Claude Code with a real
-local (or cloned) repository — so Phase 1 can actually run
-`npm install`, stand up Postgres, run Prisma migrations, and start a dev
-server. Whoever continues should:
-1. Unzip/copy this scaffold into a real project folder.
-2. `git init` and commit this Phase 0 state as the baseline.
-3. Read this file and `docs/ARCHITECTURE.md` + `docs/DATABASE.md`.
-4. Begin Phase 1: implement `backend/prisma/schema.prisma` from
-   `docs/DATABASE.md`, run the initial migration, then build auth.
+None *known* — but see "Environment constraints" above: this has not run
+against Node, Postgres, or the real `@prisma/client`, so undiscovered
+issues (a typo'd Prisma field name, a cookie option Express rejects, an
+argon2 native-build issue, etc.) are entirely possible and should be
+expected and fixed in the first real run, not treated as a surprise.
 
 ## Next recommended action
 
-Begin **Phase 1 — Database and Authentication**:
-1. Write `backend/prisma/schema.prisma` from `docs/DATABASE.md`.
-2. Run the initial Prisma migration against a real Postgres instance.
-3. Implement Argon2id password hashing, login/logout, JWT + refresh
-   cookie issuance, and role-based route guard middleware.
-4. Implement a seed script for the first teacher/admin account that reads
-   credentials from environment variables (no hardcoded password).
-5. Update this file at the end of that session.
+In an environment with network access and a Postgres instance (Claude
+Code, or your own machine):
+
+1. `npm install` at the repo root.
+2. `cp .env.example .env` and fill in real values — a real
+   `DATABASE_URL`, long random `JWT_ACCESS_SECRET` /
+   `JWT_REFRESH_SECRET`, and `INITIAL_ADMIN_PHONE`.
+3. `cd backend && npx prisma migrate dev --name init` — this will very
+   likely surface at least minor issues (e.g. the `AvailabilityException`
+   model's `@db.Date` annotation, or Decimal field defaults) since the
+   schema has never been run through Prisma. Fix whatever comes up.
+4. `npm run prisma:seed` — confirm the admin account is created and
+   capture the printed password if one was generated.
+5. `npm run dev` and manually exercise `/api/auth/login`,
+   `/api/auth/refresh`, `/api/auth/logout`, `/api/auth/me` with curl or
+   Postman. Confirm: wrong password is rejected, inactive user is
+   rejected, refresh rotation actually issues a new cookie and revokes
+   the old one, logout actually prevents the old refresh token from
+   working.
+6. Only once all of that is confirmed working, update this file marking
+   Phase 1 items ☑ instead of ◐, and move on to Phase 2 (Mobile UI
+   Foundation).

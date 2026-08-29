@@ -1,24 +1,26 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-
-// Intentionally minimal Phase 0 placeholder: no routes, no Prisma client,
-// no auth yet. See PROJECT_STATUS.md — Phase 1 adds the database
-// connection, auth routes, and role-guard middleware described in
-// docs/ARCHITECTURE.md and docs/SECURITY.md.
+import { env } from "./lib/env.js";
+import apiRouter from "./routes/index.js";
+import { errorHandler, notFoundHandler } from "./middleware/errorHandler.js";
 
 const app = express();
 
-app.use(cors({ origin: process.env.FRONTEND_ORIGIN, credentials: true }));
+app.use(cors({ origin: env.FRONTEND_ORIGIN, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
 
 app.get("/health", (_req, res) => {
-  res.json({ status: "ok", phase: "0 - scaffolding only" });
+  res.json({ status: "ok" });
 });
 
-const port = Number(process.env.PORT) || 4000;
-app.listen(port, () => {
+app.use("/api", apiRouter);
+
+app.use(notFoundHandler);
+app.use(errorHandler);
+
+app.listen(env.PORT, () => {
   // eslint-disable-next-line no-console
-  console.log(`API listening on port ${port} (Phase 0 scaffold)`);
+  console.log(`API listening on port ${env.PORT}`);
 });
