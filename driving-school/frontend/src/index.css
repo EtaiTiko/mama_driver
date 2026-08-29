@@ -1,0 +1,5 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Real typography/spacing decisions land in Phase 2 (Mobile UI Foundation). */

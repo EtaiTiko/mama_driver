@@ -1,0 +1,16 @@
+// Prisma schema — Phase 0 stub.
+//
+// Only the datasource/generator are configured here. The actual data
+// model (User, Teacher, Student, Lesson, TeacherAvailability,
+// AvailabilityException, Message, Notification, Payment, ...) is fully
+// planned in /docs/DATABASE.md and should be implemented here as the
+// first task of Phase 1, followed by `prisma migrate dev`.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
