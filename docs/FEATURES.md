@@ -33,10 +33,10 @@ before it's implemented *and* tested. That test pass is the very next
 step, in an environment with network + Postgres access.
 
 ## Phase 2 — Mobile UI foundation
-☐ Tailwind + RTL base configured
-☐ Hebrew typography chosen (readable at small sizes)
-☐ Bottom navigation (student + teacher variants)
-☐ Shared component library: buttons, cards, inputs sized for touch
+☑ Tailwind + RTL base configured
+☑ Hebrew typography chosen (readable at small sizes)
+☑ Bottom navigation (student + teacher variants)
+☑ Shared component library: buttons, cards, inputs sized for touch
 
 ## Phase 3 — Student experience
 ☐ Student dashboard (next lesson, quick actions, notifications)
