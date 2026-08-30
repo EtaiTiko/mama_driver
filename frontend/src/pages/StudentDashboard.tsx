@@ -4,7 +4,7 @@ import { StudentBottomNav, Container, Card, CardHeader, CardBody, Button, Spacer
 
 export default function StudentDashboard() {
   const navigate = useNavigate();
-  const { lessons, getNextLesson, getLessonStats, loading } = useLessons();
+  const { getNextLesson, getLessonStats, loading } = useLessons();
 
   const nextLesson = getNextLesson();
   const stats = getLessonStats();
@@ -24,7 +24,7 @@ export default function StudentDashboard() {
       <div className="pb-24">
         <Container>
           <div className="pt-6">
-            <p className="text-center text-gray-600">טוען...</p>
+            <p className="text-center text-stone-500">טוען...</p>
           </div>
         </Container>
         <StudentBottomNav />
@@ -34,13 +34,14 @@ export default function StudentDashboard() {
 
   return (
     <div className="pb-24">
+      <div className="bg-brand pt-10 pb-14 px-4 mb-[-2rem]">
+        <div className="max-w-md mx-auto">
+          <h1 className="font-serif text-2xl font-bold text-white mb-1">שלום, תלמיד!</h1>
+          <p className="text-white/80">הממתינים לשיעור הבא שלך</p>
+        </div>
+      </div>
       <Container>
-        <div className="pt-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">שלום, תלמיד!</h1>
-          <p className="text-gray-600">הממתינים לשיעור הבא שלך</p>
-
-          <Spacer size="lg" />
-
+        <div>
           {/* Next Lesson Card */}
           {nextLesson ? (
             <Card interactive>
@@ -48,18 +49,18 @@ export default function StudentDashboard() {
               <CardBody>
                 <div className="space-y-3">
                   <div>
-                    <p className="text-sm text-gray-600">מדריך</p>
+                    <p className="text-sm text-stone-500">מדריך</p>
                     <p className="font-semibold">{nextLesson.teacher?.name || 'מדריך לא ידוע'}</p>
                   </div>
                   {nextLesson.lessonType && (
                     <div>
-                      <p className="text-sm text-gray-600">סוג שיעור</p>
+                      <p className="text-sm text-stone-500">סוג שיעור</p>
                       <Badge variant="success">{nextLesson.lessonType}</Badge>
                     </div>
                   )}
                   <div>
-                    <p className="text-sm text-gray-600">מחיר</p>
-                    <p className="font-bold text-lg text-blue-600">₪{nextLesson.price}</p>
+                    <p className="text-sm text-stone-500">מחיר</p>
+                    <p className="font-bold text-lg text-primary-600">₪{nextLesson.price}</p>
                   </div>
                 </div>
               </CardBody>
@@ -68,7 +69,7 @@ export default function StudentDashboard() {
             <Card>
               <CardHeader title="אין שיעורים קרובים" />
               <CardBody>
-                <p className="text-gray-600 mb-4">בקשו שיעור חדש כדי להתחיל</p>
+                <p className="text-stone-500 mb-4">בקשו שיעור חדש כדי להתחיל</p>
                 <Button
                   variant="primary"
                   fullWidth
@@ -108,20 +109,20 @@ export default function StudentDashboard() {
             <CardBody>
               <div className="grid grid-cols-2 gap-4">
                 <div className="text-center">
-                  <p className="text-3xl font-bold text-blue-600">{stats.completed}</p>
-                  <p className="text-sm text-gray-600">שיעורים בוצעו</p>
+                  <p className="text-3xl font-bold text-primary-600">{stats.completed}</p>
+                  <p className="text-sm text-stone-500">שיעורים בוצעו</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-3xl font-bold text-green-600">{stats.pending + stats.accepted}</p>
-                  <p className="text-sm text-gray-600">שיעורים קרובים</p>
+                  <p className="text-3xl font-bold text-success-600">{stats.pending + stats.accepted}</p>
+                  <p className="text-sm text-stone-500">שיעורים קרובים</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-3xl font-bold text-yellow-600">{stats.pending}</p>
-                  <p className="text-sm text-gray-600">ממתינות לאישור</p>
+                  <p className="text-3xl font-bold text-warning-600">{stats.pending}</p>
+                  <p className="text-sm text-stone-500">ממתינות לאישור</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-3xl font-bold text-red-600">{stats.cancelled}</p>
-                  <p className="text-sm text-gray-600">מבוטלים</p>
+                  <p className="text-3xl font-bold text-danger-600">{stats.cancelled}</p>
+                  <p className="text-sm text-stone-500">מבוטלים</p>
                 </div>
               </div>
             </CardBody>

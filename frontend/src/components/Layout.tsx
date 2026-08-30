@@ -5,7 +5,7 @@ interface DividerProps {
 }
 
 export const Divider: React.FC<DividerProps> = ({ className }) => (
-  <hr className={`border-gray-200 my-4 ${className}`} />
+  <hr className={`border-stone-200 my-4 ${className}`} />
 );
 
 interface SpacerProps {

@@ -1,0 +1,46 @@
+/* --- Hebrew Typography (Phase 2) --- */
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&family=Frank+Ruhl+Libre:wght@500;700;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* --- Base RTL/LTR setup --- */
+
+@layer base {
+  html {
+    @apply scroll-smooth;
+  }
+
+  html[dir='rtl'] {
+    direction: rtl;
+    text-align: right;
+  }
+
+  html[dir='ltr'] {
+    direction: ltr;
+    text-align: left;
+  }
+
+  body {
+    /* Warm stone instead of stark white/gray — the whole app sits on a
+       soft ivory instead of a cold, pale canvas. */
+    @apply font-sans antialiased bg-stone-50 text-stone-900;
+  }
+}
+
+/* --- Mobile-first touch targets (48px minimum) --- */
+
+@layer components {
+  .btn-touch {
+    @apply h-touch min-h-touch flex items-center justify-center px-4;
+  }
+
+  .input-touch {
+    @apply h-touch min-h-touch px-4 py-3 border rounded-xl;
+  }
+
+  .tap-highlight {
+    @apply active:opacity-80 transition-opacity;
+  }
+}

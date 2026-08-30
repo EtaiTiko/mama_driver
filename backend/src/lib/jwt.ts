@@ -11,7 +11,10 @@ export interface AccessTokenPayload {
 
 export function signAccessToken(payload: AccessTokenPayload): string {
   return jwt.sign(payload, env.JWT_ACCESS_SECRET, {
-    expiresIn: env.JWT_ACCESS_TOKEN_TTL,
+    // env.JWT_ACCESS_TOKEN_TTL is validated at runtime (see env.ts) to be a
+    // duration string like "15m", but @types/jsonwebtoken types `expiresIn`
+    // with a narrow literal union it can't express from a plain `string`.
+    expiresIn: env.JWT_ACCESS_TOKEN_TTL as jwt.SignOptions["expiresIn"],
   });
 }
 

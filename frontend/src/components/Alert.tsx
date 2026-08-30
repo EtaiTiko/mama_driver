@@ -14,20 +14,20 @@ export const Alert: React.FC<AlertProps> = ({
   onClose,
 }) => {
   const typeStyles = {
-    success: "bg-green-50 text-green-800 border-green-200",
-    error: "bg-red-50 text-red-800 border-red-200",
-    warning: "bg-yellow-50 text-yellow-800 border-yellow-200",
-    info: "bg-blue-50 text-blue-800 border-blue-200",
+    success: "bg-success-50 text-success-700 border-success-500",
+    error: "bg-danger-50 text-danger-700 border-danger-500",
+    warning: "bg-warning-50 text-warning-700 border-warning-500",
+    info: "bg-primary-50 text-primary-700 border-primary-500",
   };
 
   return (
     <div
       className={`
-        border-l-4 p-4 rounded-lg
+        border-r-4 p-4 rounded-xl
         ${typeStyles[type]}
       `}
     >
-      <div className="flex justify-between items-start">
+      <div className="flex justify-between items-start gap-4">
         <div>
           {title && <h4 className="font-semibold mb-1">{title}</h4>}
           <div className="text-sm">{children}</div>
@@ -35,7 +35,7 @@ export const Alert: React.FC<AlertProps> = ({
         {onClose && (
           <button
             onClick={onClose}
-            className="ml-4 font-bold opacity-70 hover:opacity-100"
+            className="font-bold opacity-70 hover:opacity-100"
           >
             ✕
           </button>

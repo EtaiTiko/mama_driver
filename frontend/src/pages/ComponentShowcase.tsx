@@ -23,8 +23,8 @@ export default function ComponentShowcase() {
     <div className="pb-24">
       <Container>
         <div className="pt-6">
-          <h1 className="text-3xl font-bold mb-2">Component Showcase</h1>
-          <p className="text-gray-600 mb-6">Phase 2 - UI Component Library</p>
+          <h1 className="font-serif text-3xl font-bold text-stone-900 mb-2">Component Showcase</h1>
+          <p className="text-stone-500 mb-6">Phase 2 - UI Component Library</p>
 
           {/* Buttons Section */}
           <Card>
@@ -159,15 +159,15 @@ export default function ComponentShowcase() {
           <Card>
             <CardHeader title="Touch-Optimized Layout" />
             <CardBody>
-              <p className="text-sm text-gray-600 mb-4">
+              <p className="text-sm text-stone-500 mb-4">
                 All interactive elements have a minimum 48px touch target for
                 mobile usability.
               </p>
               <div className="space-y-3">
-                <div className="p-4 bg-blue-50 rounded text-sm">
+                <div className="p-4 bg-primary-50 rounded-xl text-sm text-primary-700">
                   Button height: 3rem (48px)
                 </div>
-                <div className="p-4 bg-blue-50 rounded text-sm">
+                <div className="p-4 bg-primary-50 rounded-xl text-sm text-primary-700">
                   Input height: 3rem (48px)
                 </div>
               </div>

@@ -21,32 +21,32 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   return (
     <nav
       className={`
-        fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200
+        fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200
         ${variant === "teacher" ? "shadow-2xl" : "shadow-lg"}
       `}
     >
-      <div className="flex justify-around items-center h-20">
+      <div className="flex justify-around items-center h-20 px-2">
         {items.map((item) => (
           <NavLink
             key={item.id}
             to={item.href}
             className={({ isActive }) => `
-              flex flex-col items-center justify-center h-20 flex-1
-              tap-highlight relative
+              flex flex-col items-center justify-center h-14 flex-1
+              tap-highlight relative rounded-2xl mx-1 transition-colors
               ${
                 isActive
-                  ? "text-blue-600 border-t-2 border-blue-600"
-                  : "text-gray-600 hover:text-gray-900"
+                  ? "text-primary-600 bg-primary-50"
+                  : "text-stone-500 hover:text-stone-800"
               }
             `}
           >
             <div className="text-2xl mb-1">{item.icon}</div>
             <span className="text-xs font-medium">{item.label}</span>
-            {item.badge && (
-              <span className="absolute top-1 right-1/4 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+            {item.badge ? (
+              <span className="absolute top-1 right-1/4 bg-accent-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                 {item.badge}
               </span>
-            )}
+            ) : null}
           </NavLink>
         ))}
       </div>

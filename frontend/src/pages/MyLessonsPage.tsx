@@ -5,8 +5,6 @@ import { LessonStatus } from '../types/lesson';
 import {
   Container,
   Card,
-  CardHeader,
-  CardBody,
   Button,
   Badge,
   Spacer,
@@ -103,8 +101,8 @@ export default function MyLessonsPage() {
     <div className="pb-24">
       <Container>
         <div className="pt-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">שיעורים שלי</h1>
-          <p className="text-gray-600 mb-6">ניהול השיעורים שלכם</p>
+          <h1 className="font-serif text-2xl font-bold text-stone-900 mb-2">שיעורים שלי</h1>
+          <p className="text-stone-500 mb-6">ניהול השיעורים שלכם</p>
 
           {/* Tabs */}
           <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
@@ -112,10 +110,10 @@ export default function MyLessonsPage() {
               <button
                 key={tab}
                 onClick={() => setSelectedTab(tab)}
-                className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-colors ${
+                className={`px-4 py-2 rounded-xl font-medium whitespace-nowrap transition-colors ${
                   selectedTab === tab
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-brand text-white shadow-soft'
+                    : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
                 }`}
               >
                 {tab === 'upcoming' && 'קרובים'}
@@ -157,10 +155,10 @@ export default function MyLessonsPage() {
                   <div className="p-4">
                     <div className="flex justify-between items-start mb-3">
                       <div>
-                        <h3 className="font-semibold text-gray-900">
+                        <h3 className="font-semibold text-stone-900">
                           {lesson.teacher?.name || 'מדריך לא ידוע'}
                         </h3>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-stone-500">
                           {formatDateTime(lesson.startTime)}
                         </p>
                       </div>
@@ -170,19 +168,19 @@ export default function MyLessonsPage() {
                     </div>
 
                     {lesson.lessonType && (
-                      <p className="text-sm text-gray-600 mb-3">
+                      <p className="text-sm text-stone-500 mb-3">
                         סוג: {lesson.lessonType}
                       </p>
                     )}
 
                     {lesson.notes && (
-                      <p className="text-sm text-gray-600 mb-3 bg-gray-50 p-2 rounded">
+                      <p className="text-sm text-stone-600 mb-3 bg-stone-50 p-2 rounded-lg">
                         הערות: {lesson.notes}
                       </p>
                     )}
 
                     <div className="flex justify-between items-center mb-3">
-                      <span className="text-lg font-bold text-blue-600">
+                      <span className="text-lg font-bold text-primary-600">
                         ₪{lesson.price}
                       </span>
                     </div>

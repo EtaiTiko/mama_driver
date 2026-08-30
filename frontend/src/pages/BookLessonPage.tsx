@@ -29,7 +29,7 @@ export default function BookLessonPage() {
       <div className="pb-24">
         <Container>
           <div className="pt-6 text-center">
-            <p className="text-gray-600">לא נמצא שיעור</p>
+            <p className="text-stone-500">לא נמצא שיעור</p>
             <Button
               variant="primary"
               onClick={() => navigate('/student/lessons')}
@@ -77,12 +77,14 @@ export default function BookLessonPage() {
     return (
       <div className="pb-24">
         <Container>
-          <div className="pt-12 text-center">
-            <div className="text-6xl mb-4">✓</div>
-            <h2 className="text-2xl font-bold text-green-600 mb-2">
+          <div className="pt-16 text-center">
+            <div className="w-24 h-24 rounded-full bg-success-100 flex items-center justify-center text-5xl mx-auto mb-6">
+              ✓
+            </div>
+            <h2 className="font-serif text-2xl font-bold text-success-700 mb-2">
               בקשה הוגשה בהצלחה!
             </h2>
-            <p className="text-gray-600 mb-6">
+            <p className="text-stone-500 mb-6">
               המדריך יבדוק את הבקשה שלכם ויחזור אליכם בהקדם
             </p>
             <Button
@@ -103,8 +105,8 @@ export default function BookLessonPage() {
     <div className="pb-24">
       <Container>
         <div className="pt-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">בקשת שיעור</h1>
-          <p className="text-gray-600 mb-6">אישור פרטי השיעור</p>
+          <h1 className="font-serif text-2xl font-bold text-stone-900 mb-2">בקשת שיעור</h1>
+          <p className="text-stone-500 mb-6">אישור פרטי השיעור</p>
 
           {/* Lesson Details */}
           <Card>
@@ -112,20 +114,20 @@ export default function BookLessonPage() {
             <CardBody>
               <div className="space-y-4">
                 <div>
-                  <p className="text-sm text-gray-600">תאריך ושעה</p>
-                  <p className="font-semibold text-lg text-gray-900">
+                  <p className="text-sm text-stone-500">תאריך ושעה</p>
+                  <p className="font-semibold text-lg text-stone-900">
                     {formatDateTime(slot.startTime)}
                   </p>
                 </div>
 
-                <div className="border-t pt-4">
-                  <p className="text-sm text-gray-600">משך</p>
-                  <p className="font-semibold text-gray-900">60 דקות</p>
+                <div className="border-t border-stone-200 pt-4">
+                  <p className="text-sm text-stone-500">משך</p>
+                  <p className="font-semibold text-stone-900">60 דקות</p>
                 </div>
 
-                <div className="border-t pt-4 bg-blue-50 p-3 rounded">
-                  <p className="text-sm text-gray-600">מחיר</p>
-                  <p className="font-bold text-2xl text-blue-600">₪{slot.price}</p>
+                <div className="border-t border-stone-200 pt-4 bg-primary-50 p-3 rounded-xl">
+                  <p className="text-sm text-stone-500">מחיר</p>
+                  <p className="font-bold text-2xl text-primary-600">₪{slot.price}</p>
                 </div>
               </div>
             </CardBody>

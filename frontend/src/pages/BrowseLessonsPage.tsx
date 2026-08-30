@@ -63,9 +63,9 @@ export default function BrowseLessonsPage() {
     <div className="pb-24">
       <Container>
         <div className="pt-6">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">שיעורים זמינים</h1>
-          <p className="text-gray-600 mb-2">בחרו שיעור עם {availableSlots[0]?.teacher.name}</p>
-          <p className="text-sm text-gray-500 mb-6">מחיר קבוע: ₪{availableSlots[0]?.price}</p>
+          <h1 className="font-serif text-2xl font-bold text-stone-900 mb-2">שיעורים זמינים</h1>
+          <p className="text-stone-500 mb-2">בחרו שיעור עם {availableSlots[0]?.teacher.name}</p>
+          <p className="text-sm text-primary-600 font-medium mb-6">מחיר קבוע: ₪{availableSlots[0]?.price}</p>
 
           {/* Date Filter */}
           <Card>
@@ -74,10 +74,10 @@ export default function BrowseLessonsPage() {
               <div className="grid grid-cols-4 gap-2 max-h-32 overflow-y-auto">
                 <button
                   onClick={() => setSelectedDate(null)}
-                  className={`py-2 px-3 rounded text-sm transition-colors ${
+                  className={`py-2 px-3 rounded-lg text-sm transition-colors ${
                     selectedDate === null
-                      ? 'bg-blue-600 text-white font-semibold'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      ? 'bg-brand text-white font-semibold shadow-soft'
+                      : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
                   }`}
                 >
                   הכל
@@ -86,10 +86,10 @@ export default function BrowseLessonsPage() {
                   <button
                     key={date}
                     onClick={() => setSelectedDate(date)}
-                    className={`py-2 px-3 rounded text-sm transition-colors ${
+                    className={`py-2 px-3 rounded-lg text-sm transition-colors ${
                       selectedDate === date
-                        ? 'bg-blue-600 text-white font-semibold'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        ? 'bg-brand text-white font-semibold shadow-soft'
+                        : 'bg-stone-100 text-stone-600 hover:bg-stone-200'
                     }`}
                   >
                     {formatDate(new Date(date))}
@@ -115,18 +115,18 @@ export default function BrowseLessonsPage() {
                   <div className="p-4">
                     <div className="flex justify-between items-start mb-3">
                       <div>
-                        <h3 className="font-semibold text-gray-900">
+                        <h3 className="font-semibold text-stone-900">
                           {formatTime(slot.startTime)} - {formatTime(slot.endTime)}
                         </h3>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-stone-500">
                           {formatDate(slot.startTime)}
                         </p>
                       </div>
                     </div>
 
-                    <div className="bg-blue-50 p-3 rounded mb-4">
-                      <p className="text-sm text-gray-600 mb-1">מחיר קבוע לשיעור</p>
-                      <p className="font-bold text-lg text-blue-600">₪{slot.price}</p>
+                    <div className="bg-primary-50 p-3 rounded-xl mb-4">
+                      <p className="text-sm text-stone-500 mb-1">מחיר קבוע לשיעור</p>
+                      <p className="font-bold text-lg text-primary-600">₪{slot.price}</p>
                     </div>
 
                     <Button
@@ -147,9 +147,6 @@ export default function BrowseLessonsPage() {
         </div>
       </Container>
       <StudentBottomNav />
-    </div>
-  );
-}
     </div>
   );
 }

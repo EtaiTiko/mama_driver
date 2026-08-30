@@ -23,14 +23,17 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const baseStyles =
-      "btn-touch tap-highlight font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-2";
+      "btn-touch tap-highlight font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2 active:scale-[0.98]";
 
     const variantStyles = {
-      primary: "bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-400",
+      primary:
+        "bg-brand text-white shadow-soft hover:shadow-lifted hover:brightness-110 disabled:bg-none disabled:bg-stone-300 disabled:shadow-none disabled:brightness-100",
       secondary:
-        "bg-gray-200 text-gray-900 hover:bg-gray-300 disabled:bg-gray-100",
-      ghost: "bg-transparent text-blue-600 hover:bg-blue-50 disabled:text-gray-400",
-      danger: "bg-red-600 text-white hover:bg-red-700 disabled:bg-gray-400",
+        "bg-stone-100 text-stone-900 hover:bg-stone-200 disabled:bg-stone-50 disabled:text-stone-400",
+      ghost:
+        "bg-transparent text-primary-600 hover:bg-primary-50 disabled:text-stone-400",
+      danger:
+        "bg-danger-500 text-white shadow-soft hover:bg-danger-600 disabled:bg-stone-300 disabled:shadow-none",
     };
 
     const sizeStyles = {
