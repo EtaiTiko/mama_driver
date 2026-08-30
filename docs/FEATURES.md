@@ -39,10 +39,10 @@ step, in an environment with network + Postgres access.
 ☑ Shared component library: buttons, cards, inputs sized for touch
 
 ## Phase 3 — Student experience
-☐ Student dashboard (next lesson, quick actions, notifications)
-☐ Slot browsing UI
-☐ Lesson request flow
-☐ Lesson cancellation flow (policy-aware)
+☑ Student dashboard (next lesson, quick actions, notifications)
+☑ Slot browsing UI
+☑ Lesson request flow
+☑ Lesson cancellation flow (policy-aware)
 
 ## Phase 4 — Teacher dashboard
 ☐ Today's lessons, pending requests, upcoming, cancellations, unread messages, student count

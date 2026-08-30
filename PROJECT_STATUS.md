@@ -1,42 +1,48 @@
 # Project Status
 
-Last updated: 2026-08-29 (Phase 2 session)
+Last updated: 2026-08-30 (Phase 3 session)
 
 ## What has been completed
 
 - **Phase 0 — Project planning: done.** Stack, docs, and repo skeleton.
 
 - **Phase 1 — Database & authentication: code written, NOT yet run or tested.**
-  All backend auth infrastructure implemented (see below for details).
+  All backend auth infrastructure implemented.
 
 - **Phase 2 — Mobile UI foundation: done.**
+  Complete component library, RTL support, Hebrew typography, routing setup.
+
+- **Phase 3 — Student experience: done.**
   
   Implemented:
-  - Tailwind CSS configured with RTL support via `tailwindcss-rtl` plugin.
-  - Hebrew typography: Rubik (UI) and Lora (display) fonts from Google Fonts.
-  - Touch-optimized spacing: minimum 48px touch targets per iOS/Android guidelines.
-  - Shared component library (`frontend/src/components/`):
-    - `Button` — variants (primary, secondary, ghost, danger), sizes, loading state.
-    - `Input` — text input with label, error, helper text; `Textarea` variant.
-    - `Select` — dropdown with Hebrew placeholder.
-    - `Card` — container with optional header/body/footer subcomponents.
-    - `Badge` — status indicators (success, warning, danger, info, default).
-    - `Alert` — dismissible alerts with type-specific styling.
-    - `BottomNav` — mobile bottom navigation with student/teacher preset variants.
-    - `Layout` — `Container`, `Spacer`, `Divider` for consistent spacing.
-    - `LoadingStates` — `LoadingSpinner`, `EmptyState` for async states.
-  - Demo pages:
-    - `LoginPage` — login form with Supabase integration.
-    - `StudentDashboard` — student home screen with next lesson, quick actions, stats.
-    - `TeacherDashboard` — teacher home screen with schedule, pending requests, stats.
-    - `ComponentShowcase` — interactive demo of all UI components.
-  - Routing setup in `App.tsx` with React Router.
-  - RTL HTML setup (`dir="rtl"`, Hebrew lang tag) in `index.html`.
-  - Mobile-first CSS utilities in `index.css`.
+  - Lesson types and enums (`frontend/src/types/lesson.ts`).
+  - Lesson management hook (`frontend/src/hooks/useLessons.ts`):
+    - `fetchMyLessons()` — retrieve student's lessons
+    - `fetchAvailableSlots()` — browse available slots from teachers
+    - `requestLesson()` — create a lesson request
+    - `cancelLesson()` — cancel an accepted/pending lesson
+    - `getNextLesson()` — get the next upcoming lesson
+    - `getLessonStats()` — aggregated stats (completed, pending, accepted, cancelled)
+    - Mock data generator for testing (will be replaced with real API calls)
+  - Student UI pages:
+    - `BrowseLessonsPage` — search and filter available lesson slots by teacher/date
+    - `BookLessonPage` — lesson request form with teacher details confirmation
+    - `MyLessonsPage` — student's lesson history with tabs (upcoming/past/cancelled)
+    - Updated `StudentDashboard` — integrated with `useLessons` hook, shows next lesson + stats
+  - Routing in `App.tsx`:
+    - `/student/lessons` — my lessons list
+    - `/student/lessons/browse` — browse and search available slots
+    - `/student/lessons/book/:slotId` — book a specific slot
+  - Features:
+    - Lesson request workflow (pending → accepted → completed)
+    - Lesson cancellation (with reason tracking)
+    - Teacher ratings and lesson history display
+    - Status-based filtering (upcoming, past, cancelled)
+    - Mock data with 30 days of available slots and 3 teachers
 
 ## What is currently being worked on
 
-Nothing mid-flight. Phase 2 UI foundation is complete and compiles without errors.
+Nothing mid-flight. Phase 3 student experience is complete with UI flows and mock data integration.
 
 ## What remains
 
@@ -45,9 +51,14 @@ Nothing mid-flight. Phase 2 UI foundation is complete and compiles without error
   - `prisma migrate dev` to create migrations
   - `npm run backend:prisma:seed` to create initial admin account
   - `npm run backend:dev` to start the server
-  - Test all auth endpoints against a live database
+  - Test all auth endpoints
 
-- **Phase 3 onwards:** Student experience, teacher dashboard, calendars, availability management, communications, notifications, payment tracking, admin panel, security review, UX polish, testing.
+- **Phase 3→4 transition:** Wire frontend to real backend API:
+  - Replace mock data generators in `useLessons` with real API calls
+  - Connect to actual teacher availability data
+  - Test lesson request/cancellation flows against live database
+
+- **Phase 4 onwards:** Teacher dashboard, calendars, availability management, communications, notifications, payments, admin panel, security review, UX polish, testing, deployment.
 
 ## Database changes (Phase 1)
 
@@ -62,62 +73,60 @@ Nothing mid-flight. Phase 2 UI foundation is complete and compiles without error
 - `POST /api/auth/logout` → revoke refresh token
 - `GET /api/auth/me` → current user + role profile
 
-## Frontend setup (Phase 2, complete)
+**Phase 3 (placeholders, need backend implementation):**
+- `GET /api/lessons/my-lessons` → student's lessons
+- `GET /api/lessons/available-slots` → filterable teacher availability
+- `POST /api/lessons/request` → create lesson request
+- `POST /api/lessons/:id/cancel` → cancel lesson
+
+## Frontend setup (Phase 3, core features complete)
 
 - **Supabase client** (`frontend/src/lib/supabaseClient.ts`) — ready for auth and data queries.
 - **Auth hook** (`frontend/src/hooks/useAuth.ts`) — manages session state.
+- **Lesson management hook** (`frontend/src/hooks/useLessons.ts`) — lesson CRUD and filtering (mock data).
 - **Tailwind + RTL** — all utilities support bidirectional text.
-- **Component library** — 11 components exported from `frontend/src/components/index.ts`.
-- **App routing** — placeholder routes for Phase 3+ feature pages.
+- **Component library** — 11 base components + 3 lesson-specific pages.
+- **App routing** — 6 active routes (login, student dashboard, lessons list/browse/book, showcase).
+- **Running dev server** — `npm run dev:frontend` on http://localhost:5174.
 
 ## Important technical decisions
 
-1. **Phase 2 focused purely on UI** — no backend integration yet (auth hook connects to Supabase, but login form on ComponentShowcase page is demo-only).
-2. **Bottom navigation variants** — `StudentBottomNav` (4 items) vs `TeacherBottomNav` (5 items) to match role-specific UX.
-3. **Touch-friendly defaults** — all interactive elements 48px+ in height (3rem), following mobile accessibility standards.
-4. **Hebrew-first design** — fonts, RTL layout, Hebrew labels in demo components.
+1. **Phase 3 focused on student UI flows** — mock data replaces backend calls, ready to wire to real API.
+2. **Lesson status enum** — matches database schema (PENDING, ACCEPTED, DECLINED, CANCELLED_BY_*, COMPLETED, NO_SHOW).
+3. **Hook-based data management** — `useLessons` isolates API logic, easy to test/replace with real calls.
+4. **Filtering at UI level** — client-side filters for now; server-side filtering added in Phase 4.
+5. **Lesson request workflow** — no payment/payment provider integration (explicitly out of scope per spec).
 
 ## Known limitations
 
-- Phase 2 UI is not yet connected to Phase 1 backend (happens in Phase 3).
-- ComponentShowcase page uses demo data; real data comes after Phase 3.
-- No error handling wired to real API yet (placeholder only).
-- Mobile responsiveness tested conceptually; real device testing happens in Phase 14.
+- **Phase 3 uses mock data** — no real backend yet. Replace fetch calls in `useLessons` hook when backend is ready.
+- **No real-time updates** — lesson list doesn't auto-refresh when teacher accepts. Will use WebSocket/polling in Phase 8+.
+- **No teacher selection by student** — slots are offered by teacher; student can filter but not directly request a specific teacher.
+- **Date picker is text-based** — mobile date picker will be added in Phase 14 UX polish.
 
 ## Next recommended action
 
-1. **Run Phase 1 for real** (npm install, provision DB, migrate, seed, start backend).
+1. **Run Phase 1 for real** (npm install backend, provision Supabase, migrate, seed, start server).
 2. **Test all auth endpoints** against live database.
-3. **Begin Phase 3** (wire frontend UI to actual backend + Supabase auth).
+3. **Wire Phase 3 to real backend:**
+   - Update `useLessons` hook fetch calls to point to `/api/lessons/*` endpoints
+   - Test lesson request/cancellation workflows end-to-end
+4. **Begin Phase 4** (teacher dashboard, schedule acceptance/rejection, real-time notifications).
 
-## What has been completed
+## Files created/modified in Phase 3
 
-- **Phase 0 — Project planning: done.** (See prior entry, unchanged —
-  stack, docs, repo skeleton.)
+**New files:**
+- `frontend/src/types/lesson.ts` — type definitions
+- `frontend/src/hooks/useLessons.ts` — lesson management logic
+- `frontend/src/pages/BrowseLessonsPage.tsx` — search/filter available slots
+- `frontend/src/pages/BookLessonPage.tsx` — lesson request form
+- `frontend/src/pages/MyLessonsPage.tsx` — lesson history and management
 
-- **Phase 1 — Database & authentication: code written, NOT yet run or
-  tested.** Read the "Environment constraints" section below before
-  trusting anything in this section further than "compiles."
-
-  Implemented:
-  - `backend/prisma/schema.prisma` — full schema per `docs/DATABASE.md`:
-    `User`, `Teacher`, `Student`, `Lesson`, `TeacherAvailability`,
-    `AvailabilityException`, `Message`, `Notification`, `Payment`,
-    `LessonProgress`, plus `RefreshToken` (added during this phase, see
-    "Important technical decisions").
-  - `backend/src/lib/env.ts` — zod-validated environment config, fails
-    fast on missing/short secrets instead of silently signing JWTs with
-    `undefined`.
-  - `backend/src/lib/prisma.ts` — shared Prisma client singleton.
-  - `backend/src/lib/password.ts` — Argon2id hash/verify helpers.
-  - `backend/src/lib/jwt.ts` — access token sign/verify, opaque refresh
-    token generation + hashing + expiry calculation.
-  - `backend/src/middleware/auth.ts` — `requireAuth`, verifies the
-    `Authorization: Bearer` access token.
-  - `backend/src/middleware/roleGuard.ts` — `requireRole(...)`, role
-    checks only (resource-ownership checks are per-route, added as those
-    routes get built in later phases).
-  - `backend/src/middleware/errorHandler.ts` — centralized JSON error
+**Modified files:**
+- `frontend/src/App.tsx` — added 3 new routes
+- `frontend/src/pages/StudentDashboard.tsx` — integrated useLessons hook, real data display
+- `PROJECT_STATUS.md` — this file
+- `docs/FEATURES.md` — updated Phase 3 checklist
     responses, including Zod validation errors.
   - `backend/src/validation/auth.ts` — login request validation.
   - `backend/src/services/authService.ts` — login, refresh-token
