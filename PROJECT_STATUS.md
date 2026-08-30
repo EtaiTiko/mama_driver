@@ -1,6 +1,94 @@
 # Project Status
 
-Last updated: 2026-08-29 (Phase 1 session)
+Last updated: 2026-08-29 (Phase 2 session)
+
+## What has been completed
+
+- **Phase 0 — Project planning: done.** Stack, docs, and repo skeleton.
+
+- **Phase 1 — Database & authentication: code written, NOT yet run or tested.**
+  All backend auth infrastructure implemented (see below for details).
+
+- **Phase 2 — Mobile UI foundation: done.**
+  
+  Implemented:
+  - Tailwind CSS configured with RTL support via `tailwindcss-rtl` plugin.
+  - Hebrew typography: Rubik (UI) and Lora (display) fonts from Google Fonts.
+  - Touch-optimized spacing: minimum 48px touch targets per iOS/Android guidelines.
+  - Shared component library (`frontend/src/components/`):
+    - `Button` — variants (primary, secondary, ghost, danger), sizes, loading state.
+    - `Input` — text input with label, error, helper text; `Textarea` variant.
+    - `Select` — dropdown with Hebrew placeholder.
+    - `Card` — container with optional header/body/footer subcomponents.
+    - `Badge` — status indicators (success, warning, danger, info, default).
+    - `Alert` — dismissible alerts with type-specific styling.
+    - `BottomNav` — mobile bottom navigation with student/teacher preset variants.
+    - `Layout` — `Container`, `Spacer`, `Divider` for consistent spacing.
+    - `LoadingStates` — `LoadingSpinner`, `EmptyState` for async states.
+  - Demo pages:
+    - `LoginPage` — login form with Supabase integration.
+    - `StudentDashboard` — student home screen with next lesson, quick actions, stats.
+    - `TeacherDashboard` — teacher home screen with schedule, pending requests, stats.
+    - `ComponentShowcase` — interactive demo of all UI components.
+  - Routing setup in `App.tsx` with React Router.
+  - RTL HTML setup (`dir="rtl"`, Hebrew lang tag) in `index.html`.
+  - Mobile-first CSS utilities in `index.css`.
+
+## What is currently being worked on
+
+Nothing mid-flight. Phase 2 UI foundation is complete and compiles without errors.
+
+## What remains
+
+- **Phase 1 (blocking):** Actually run the backend:
+  - `npm install` in backend, provision Supabase/Postgres
+  - `prisma migrate dev` to create migrations
+  - `npm run backend:prisma:seed` to create initial admin account
+  - `npm run backend:dev` to start the server
+  - Test all auth endpoints against a live database
+
+- **Phase 3 onwards:** Student experience, teacher dashboard, calendars, availability management, communications, notifications, payment tracking, admin panel, security review, UX polish, testing.
+
+## Database changes (Phase 1)
+
+- Full schema in `backend/prisma/schema.prisma` — User, Teacher, Student, Lesson, Availability, Messages, Notifications, Payments, Progress, RefreshToken.
+- **No migration generated yet** — must run `prisma migrate dev` in Phase 1 real run.
+
+## API endpoints (Phase 1, not yet tested)
+
+- `GET /health`
+- `POST /api/auth/login` → `{ accessToken }` + HttpOnly refresh cookie
+- `POST /api/auth/refresh` → token rotation
+- `POST /api/auth/logout` → revoke refresh token
+- `GET /api/auth/me` → current user + role profile
+
+## Frontend setup (Phase 2, complete)
+
+- **Supabase client** (`frontend/src/lib/supabaseClient.ts`) — ready for auth and data queries.
+- **Auth hook** (`frontend/src/hooks/useAuth.ts`) — manages session state.
+- **Tailwind + RTL** — all utilities support bidirectional text.
+- **Component library** — 11 components exported from `frontend/src/components/index.ts`.
+- **App routing** — placeholder routes for Phase 3+ feature pages.
+
+## Important technical decisions
+
+1. **Phase 2 focused purely on UI** — no backend integration yet (auth hook connects to Supabase, but login form on ComponentShowcase page is demo-only).
+2. **Bottom navigation variants** — `StudentBottomNav` (4 items) vs `TeacherBottomNav` (5 items) to match role-specific UX.
+3. **Touch-friendly defaults** — all interactive elements 48px+ in height (3rem), following mobile accessibility standards.
+4. **Hebrew-first design** — fonts, RTL layout, Hebrew labels in demo components.
+
+## Known limitations
+
+- Phase 2 UI is not yet connected to Phase 1 backend (happens in Phase 3).
+- ComponentShowcase page uses demo data; real data comes after Phase 3.
+- No error handling wired to real API yet (placeholder only).
+- Mobile responsiveness tested conceptually; real device testing happens in Phase 14.
+
+## Next recommended action
+
+1. **Run Phase 1 for real** (npm install, provision DB, migrate, seed, start backend).
+2. **Test all auth endpoints** against live database.
+3. **Begin Phase 3** (wire frontend UI to actual backend + Supabase auth).
 
 ## What has been completed
 
