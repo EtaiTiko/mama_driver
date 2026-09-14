@@ -24,6 +24,7 @@ export const Spacer: React.FC<SpacerProps> = ({ size = "md" }) => {
   return <div className={sizeClass} />;
 };
 
-export const Container: React.FC<{ children: React.ReactNode }> = ({
+export const Container: React.FC<{ children: React.ReactNode; className?: string }> = ({
   children,
-}) => <div className="max-w-md mx-auto px-4 pb-24">{children}</div>;
+  className,
+}) => <div className={`page-wrap ${className ?? ""}`}>{children}</div>;

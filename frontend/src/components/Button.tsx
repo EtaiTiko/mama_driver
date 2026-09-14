@@ -23,7 +23,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const baseStyles =
-      "btn-touch tap-highlight font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2 active:scale-[0.98]";
+      "btn-touch tap-highlight font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 active:scale-[0.98]";
 
     const variantStyles = {
       primary:

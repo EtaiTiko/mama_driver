@@ -7,6 +7,7 @@ import ComponentShowcase from "./pages/ComponentShowcase";
 import BrowseLessonsPage from "./pages/BrowseLessonsPage";
 import BookLessonPage from "./pages/BookLessonPage";
 import MyLessonsPage from "./pages/MyLessonsPage";
+import { AppShell } from "./components";
 
 export default function App() {
   const { session } = useAuth();
@@ -17,7 +18,8 @@ export default function App() {
 
   return (
     <Router>
-      <Routes>
+      <AppShell>
+        <Routes>
         <Route path="/" element={<StudentDashboard />} />
         <Route path="/student/dashboard" element={<StudentDashboard />} />
         <Route path="/student/lessons" element={<MyLessonsPage />} />
@@ -25,7 +27,8 @@ export default function App() {
         <Route path="/student/lessons/book/:slotId" element={<BookLessonPage />} />
         <Route path="/teacher/dashboard" element={<TeacherDashboard />} />
         <Route path="/showcase" element={<ComponentShowcase />} />
-      </Routes>
+        </Routes>
+      </AppShell>
     </Router>
   );
 }

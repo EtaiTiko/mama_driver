@@ -9,3 +9,4 @@ export { Alert } from "./Alert";
 export { BottomNav, StudentBottomNav, TeacherBottomNav } from "./BottomNav";
 export { Divider, Spacer, Container } from "./Layout";
 export { LoadingSpinner, EmptyState } from "./LoadingStates";
+export { AppShell } from "./AppShell";

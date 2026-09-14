@@ -65,8 +65,6 @@ export default function BrowseLessonsPage() {
         <div className="pt-6">
           <h1 className="font-serif text-2xl font-bold text-stone-900 mb-2">שיעורים זמינים</h1>
           <p className="text-stone-500 mb-2">בחרו שיעור עם {availableSlots[0]?.teacher.name}</p>
-          <p className="text-sm text-primary-600 font-medium mb-6">מחיר קבוע: ₪{availableSlots[0]?.price}</p>
-
           {/* Date Filter */}
           <Card>
             <CardHeader title="בחרו תאריך" />
@@ -125,7 +123,7 @@ export default function BrowseLessonsPage() {
                     </div>
 
                     <div className="bg-primary-50 p-3 rounded-xl mb-4">
-                      <p className="text-sm text-stone-500 mb-1">מחיר קבוע לשיעור</p>
+                      <p className="text-sm text-stone-500 mb-1">מחיר</p>
                       <p className="font-bold text-lg text-primary-600">₪{slot.price}</p>
                     </div>
 
